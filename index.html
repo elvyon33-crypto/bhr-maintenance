@@ -4,12 +4,45 @@
 .installbar{display:none;background:#eaf4fb;border:1px solid #c7e0ef;border-radius:12px;padding:11px 12px;margin-bottom:12px}
 .installbar.show{display:block}.installbar b{display:block;margin-bottom:4px}.installbar span{font-size:12px;color:#52687a}.backupbox{border:1px solid #dce6ee;border-radius:14px;padding:15px;margin-bottom:12px;background:#fbfdff}.backupicon{font-size:30px}.filebtn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;background:#e9eef3;color:#1e3a52;cursor:pointer;font-weight:600}
 </style></head><body><div id="root"></div><script>
-const state={user:localStorage.getItem('mr_user')||'',page:'dashboard',jobs:JSON.parse(localStorage.getItem('mr_jobs')||'[]'),locations:JSON.parse(localStorage.getItem('mr_locations')||'[]'),equipment:JSON.parse(localStorage.getItem('mr_equipment')||'[]'),schedules:JSON.parse(localStorage.getItem('mr_schedules')||'[]')};
+const state={user:localStorage.getItem('mr_user')||'',page:'dashboard',jobs:[],locations:[],equipment:[],schedules:[]};
+let db=null,storageMode='IndexedDB';
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('IndexedDB unavailable'));return}let req=indexedDB.open('BHR_Maintenance_DB',1);req.onupgradeneeded=()=>{let d=req.result;if(!d.objectStoreNames.contains('data'))d.createObjectStore('data')};req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error||new Error('Database open failed'))})}
+function dbGet(key){return new Promise((resolve,reject)=>{try{let r=db.transaction('data','readonly').objectStore('data').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}catch(e){reject(e)}})}
+function dbSet(key,value){return new Promise((resolve,reject)=>{try{let r=db.transaction('data','readwrite').objectStore('data').put(value,key);r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)}catch(e){reject(e)}})}
+async function initStorage(){
+ try{
+  await openDB();
+  let existing=await dbGet('state');
+  if(existing && Array.isArray(existing.jobs)){
+   state.jobs=existing.jobs;state.locations=existing.locations||[];state.equipment=existing.equipment||[];state.schedules=existing.schedules||[];
+  }else{
+   state.jobs=JSON.parse(localStorage.getItem('mr_jobs')||'[]');
+   state.locations=JSON.parse(localStorage.getItem('mr_locations')||'[]');
+   state.equipment=JSON.parse(localStorage.getItem('mr_equipment')||'[]');
+   state.schedules=JSON.parse(localStorage.getItem('mr_schedules')||'[]');
+   await dbSet('state',{jobs:state.jobs,locations:state.locations,equipment:state.equipment,schedules:state.schedules});
+  }
+  localStorage.removeItem('mr_jobs');localStorage.removeItem('mr_locations');localStorage.removeItem('mr_equipment');localStorage.removeItem('mr_schedules');
+  storageMode='IndexedDB';
+ }catch(e){
+  storageMode='Browser fallback';
+  state.jobs=JSON.parse(localStorage.getItem('mr_jobs')||'[]');
+  state.locations=JSON.parse(localStorage.getItem('mr_locations')||'[]');
+  state.equipment=JSON.parse(localStorage.getItem('mr_equipment')||'[]');
+  state.schedules=JSON.parse(localStorage.getItem('mr_schedules')||'[]');
+ }
+ render();
+}
+
 function localDate(d=new Date()){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
 function monthKey(d){return String(d||'').slice(0,7)}
 function monthName(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}
 const types=['Room Filter Cleaning','Office Filter Cleaning','AHU Coil Cleaning','AHU Filter Cleaning / Replacement','DVM Coil Cleaning','DVM Maintenance','Cold Room Cleaning','Freezer Cleaning','Preventive Maintenance','Repair','Breakdown','Inspection','Other'];
-function save(){localStorage.setItem('mr_jobs',JSON.stringify(state.jobs));localStorage.setItem('mr_locations',JSON.stringify(state.locations));localStorage.setItem('mr_equipment',JSON.stringify(state.equipment));localStorage.setItem('mr_schedules',JSON.stringify(state.schedules))}
+function save(){
+ const snapshot={jobs:state.jobs,locations:state.locations,equipment:state.equipment,schedules:state.schedules};
+ if(db){dbSet('state',snapshot).catch(()=>{storageMode='Browser fallback';localStorage.setItem('mr_jobs',JSON.stringify(state.jobs));localStorage.setItem('mr_locations',JSON.stringify(state.locations));localStorage.setItem('mr_equipment',JSON.stringify(state.equipment));localStorage.setItem('mr_schedules',JSON.stringify(state.schedules))})}
+ else{localStorage.setItem('mr_jobs',JSON.stringify(state.jobs));localStorage.setItem('mr_locations',JSON.stringify(state.locations));localStorage.setItem('mr_equipment',JSON.stringify(state.equipment));localStorage.setItem('mr_schedules',JSON.stringify(state.schedules))}
+}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function render(){if(!state.user){document.getElementById('root').innerHTML=`<div class="login"><div class="loginbox"><div class="logo">MR</div><h2>Maintenance Report</h2><p style="color:#66788a">BHR Solutions — HVAC maintenance reporting</p><label>Technician name</label><input id="loginName" placeholder="Enter your name"><label>Role</label><select id="loginRole"><option>Technician</option><option>HVAC Engineer</option><option>Supervisor</option><option>Admin</option></select><button class="btn" style="width:100%;margin-top:15px" onclick="login()">Sign in</button></div></div>`;return}
 const nav=[['dashboard','🏠 Dashboard'],['new','➕ New Report'],['jobs','📋 Jobs'],['locations','🏢 Locations'],['equipment','🔧 Equipment'],['schedule','📅 Schedule'],['reports','📊 Reports'],['backup','💾 Backup']];document.getElementById('root').innerHTML=`<div class="app"><div class="top"><div class="brand"><div><h1>Maintenance Report</h1><small>BHR Solutions • Hotel HVAC</small></div><div class="user">👤 ${esc(state.user)} <span onclick="logout()" style="cursor:pointer">×</span></div></div></div><div class="nav">${nav.map(x=>`<button class="${state.page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('')}</div><main class="content"><div id="installBar" class="installbar"><b>📱 Install BHR Maintenance</b><span>Add this app to your phone home screen for quick access.</span><button class="btn" style="margin-top:8px" onclick="installPWA()">Install App</button></div>${pages[state.page]()}</main><div class="footer">BHR Solutions • Maintenance Report Prototype</div></div>`}
@@ -429,6 +462,7 @@ let total=state.jobs.length, schedules=state.schedules.length, photos=state.jobs
 let last=localStorage.getItem('mr_last_backup');
 return `<h2>💾 Data Backup & Export</h2>
 <div class="backupbox"><div class="row"><div class="backupicon">🛡️</div><div><h3 style="margin:0">Protect your maintenance history</h3><p style="margin:4px 0;color:#64748b;font-size:12px">Your jobs stay on this device. Use a JSON backup regularly so you can restore everything, including before/after photos.</p></div></div></div>
+<div class="card" style="margin-bottom:12px;background:#f5fbf7;border-color:#cfe9da"><b>📱 Offline storage: ${storageMode}</b><p style="margin:5px 0 0;color:#64748b;font-size:12px">Jobs, schedules and photos are stored locally on this phone and remain available without internet. Keep regular backups before resetting or clearing the app.</p></div>
 <div class="grid">
 <div class="card stat"><b>${total}</b><span>Saved maintenance reports</span></div>
 <div class="card stat"><b>${schedules}</b><span>Saved schedules</span></div>
@@ -457,7 +491,7 @@ function exportJobsCSV(){downloadFile('BHR_Maintenance_All_Jobs_'+stamp()+'.csv'
 function exportCurrentMonthCSV(){let m=localStorage.getItem('mr_report_month')||localDate().slice(0,7);let jobs=state.jobs.filter(j=>monthKey(j.date)===m);downloadFile('BHR_Maintenance_'+m+'.csv',jobsCSV(jobs),'text/csv;charset=utf-8');alert('Selected month exported: '+monthName(m));}
 function restoreBackup(inp){let f=inp.files&&inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x||!Array.isArray(x.jobs)||!Array.isArray(x.schedules))throw new Error('Invalid backup');if(!confirm('Restore this backup? Current saved data will be replaced by the backup.'))return;state.jobs=x.jobs;state.locations=Array.isArray(x.locations)?x.locations:[];state.equipment=Array.isArray(x.equipment)?x.equipment:[];state.schedules=x.schedules;state.user=x.user||state.user;save();if(state.user)localStorage.setItem('mr_user',state.user);if(x.reportDate)localStorage.setItem('mr_report_date',x.reportDate);if(x.reportMonth)localStorage.setItem('mr_report_month',x.reportMonth);localStorage.setItem('mr_last_backup','Restored '+new Date().toLocaleString());alert('Backup restored successfully. Your maintenance history is back.');state.page='dashboard';render();}catch(e){alert('This is not a valid BHR Maintenance backup file.')}};r.readAsText(f);inp.value=''}
 
-const pages={dashboard,new:newPage,jobs,locations,equipment,schedule,reports,backup:backupPage};render();
+const pages={dashboard,new:newPage,jobs,locations,equipment,schedule,reports,backup:backupPage};initStorage();
 
 let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{
