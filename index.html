@@ -374,7 +374,7 @@ ${monthJobs.length?`<div class="section photo-evidence"><div class="row between"
 ${Object.entries(typesCount).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="card" style="margin-bottom:7px"><div class="row between"><span>${esc(k)}</span><b>${v}</b></div></div>`).join('')||'<div class="empty">No data yet.</div>'}
 </div>
 <div class="row" style="flex-wrap:wrap">
-<button class="btn" onclick="printMonthlyReport('${selectedMonth}')">🖨️ Print / Save monthly report with photos</button>
+<button class="btn" onclick="printMonthlyReport('${selectedMonth}')">🖨️ Print / Save monthly report (10 jobs/page with photos)</button>
 <button class="btn green" onclick="shareMonthlyReport('${selectedMonth}')">↗️ Share monthly report</button>
 </div>
 </div>`;
@@ -436,29 +436,34 @@ try{
 }
 
 function buildMonthlyReportHTML(month){
-let jobs=state.jobs.filter(j=>monthKey(j.date)===month).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+let jobs=state.jobs.filter(j=>(j.date||'').slice(0,7)===month).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
 let pretty=monthName(month);
-let completed=jobs.filter(j=>j.status==='Completed').length;
-let pending=jobs.filter(j=>j.status!=='Completed').length;
-let critical=jobs.filter(j=>j.priority==='Critical').length;
 let photoJobs=jobs.filter(j=>j.before||j.after);
-let rows=jobs.map(j=>`<tr><td>${esc(j.date)}</td><td>${esc(j.technician)}</td><td>${esc(j.location)}</td><td>${esc(j.equipment)}</td><td>${esc(j.type)}</td><td>${esc(j.work)}</td><td>${esc(j.parts)}</td><td>${esc(j.status)}</td></tr>`).join('');
-let photoCards=photoJobs.map((j,i)=>`<div class="photo-card"><div class="photo-head"><div><b>${i+1}. ${esc(j.date)} — ${esc(j.location||'No location')}</b><div class="sub">${esc(j.equipment||'No equipment')} • ${esc(j.type||'')} • Technician: ${esc(j.technician||'')} • Status: ${esc(j.status||'')}</div></div></div><div class="photos"><div class="photo-box"><div class="label">BEFORE</div>${j.before?`<img src="${j.before}" alt="Before photo">`:`<div class="no-photo">No before photo</div>`}</div><div class="photo-box"><div class="label">AFTER</div>${j.after?`<img src="${j.after}" alt="After photo">`:`<div class="no-photo">No after photo</div>`}</div></div>${j.work?`<div class="work"><b>Work:</b> ${esc(j.work)}</div>`:''}${j.remarks?`<div class="work"><b>Remarks:</b> ${esc(j.remarks)}</div>`:''}</div>`).join('');
+let total=jobs.length,completed=jobs.filter(j=>j.status==='Completed').length,pending=jobs.filter(j=>j.status==='Pending').length,critical=jobs.filter(j=>j.priority==='Critical').length;
+// Compact photo evidence: 10 jobs per printed A4 landscape page (2 columns x 5 rows).
+let chunks=[];for(let i=0;i<photoJobs.length;i+=10)chunks.push(photoJobs.slice(i,i+10));
+let pages=chunks.map((chunk,pageIndex)=>`<section class="photo-page">
+  <div class="page-title"><div><b>Before / After Photo Evidence</b><span>${esc(pretty)} • Jobs ${pageIndex*10+1}-${pageIndex*10+chunk.length}</span></div><div class="page-no">Page ${pageIndex+1} / ${chunks.length}</div></div>
+  <div class="photo-grid">${chunk.map((j,i)=>`<div class="photo-card">
+    <div class="job-head"><b>${pageIndex*10+i+1}. ${esc(j.date||'')}</b><span>${esc(j.status||'')}</span></div>
+    <div class="job-meta"><b>${esc(j.location||'No location')}</b> • ${esc(j.equipment||'No equipment')} • ${esc(j.technician||'')}</div>
+    <div class="photos">
+      <div class="photo-box"><div class="label">BEFORE</div>${j.before?`<img src="${j.before}" alt="Before photo">`:`<div class="no-photo">No photo</div>`}</div>
+      <div class="photo-box"><div class="label">AFTER</div>${j.after?`<img src="${j.after}" alt="After photo">`:`<div class="no-photo">No photo</div>`}</div>
+    </div>
+    ${j.work?`<div class="work"><b>Work:</b> ${esc(j.work)}</div>`:''}
+  </div>`).join('')}</div>
+</section>`).join('');
 return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BHR Solutions Monthly Maintenance Report - ${esc(pretty)}</title><style>
-*{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0;padding:20px;color:#122033;background:#fff}h1{color:#1769aa;margin:0 0 4px;font-size:24px}h2{margin:0 0 14px;font-size:19px}.meta{color:#52687a;margin-bottom:16px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:15px 0 20px}.stat{border:1px solid #dbe5ed;border-radius:8px;padding:10px;background:#f6f9fb}.stat b{display:block;font-size:18px}.stat span{font-size:11px;color:#52687a}table{border-collapse:collapse;width:100%;font-size:10px;table-layout:fixed}th{background:#eaf1f6;font-weight:700}td,th{border:1px solid #b9c5cf;padding:6px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th:nth-child(1){width:9%}th:nth-child(2){width:11%}th:nth-child(3){width:12%}th:nth-child(4){width:12%}th:nth-child(5){width:12%}th:nth-child(6){width:25%}th:nth-child(7){width:11%}th:nth-child(8){width:8%}.footer{margin-top:18px;font-size:10px;color:#718096}.photo-section{margin-top:28px}.photo-section h2{color:#1769aa;border-bottom:2px solid #1769aa;padding-bottom:6px}.photo-card{border:1px solid #cfd9e2;border-radius:9px;padding:10px;margin:0 0 12px;page-break-inside:avoid}.photo-head{margin-bottom:8px}.sub{font-size:9px;color:#64748b;margin-top:3px}.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo-box{border:1px solid #d6dee6;border-radius:7px;padding:6px;min-height:170px}.photo-box .label{font-weight:700;font-size:9px;color:#52687a;margin-bottom:5px}.photo-box img{width:100%;height:190px;object-fit:contain;background:#f7f9fb;border-radius:5px}.no-photo{height:190px;display:flex;align-items:center;justify-content:center;background:#f7f9fb;color:#94a3b8;font-size:11px;border-radius:5px}.work{font-size:9px;margin-top:7px;line-height:1.4}.page-break{page-break-before:always}
-@media(max-width:700px){body{padding:14px}h1{font-size:20px}h2{font-size:16px}.summary{grid-template-columns:repeat(2,1fr)}table{font-size:8px}td,th{padding:4px}.photos{grid-template-columns:1fr 1fr}.photo-box img,.no-photo{height:130px}}
-@media print{body{padding:8mm}.no-print{display:none}.summary{grid-template-columns:repeat(4,1fr)}table{font-size:8.5px}thead{display:table-header-group}tr{page-break-inside:avoid}.photo-section{page-break-before:always}.photo-box img{height:180px}@page{size:A4 landscape;margin:8mm}}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#122033;font-family:Arial,sans-serif}body{padding:8mm}.cover{page-break-after:always}.cover h1{color:#1769aa;margin:0 0 3px;font-size:24px}.cover h2{margin:0 0 12px;font-size:18px}.meta{font-size:10px;color:#52687a;margin-bottom:12px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 14px}.stat{border:1px solid #dbe5ed;border-radius:6px;padding:7px;background:#f6f9fb}.stat b{display:block;font-size:15px}.stat span{font-size:9px;color:#52687a}.summary-table{border-collapse:collapse;width:100%;font-size:8px}.summary-table th,.summary-table td{border:1px solid #b9c5cf;padding:4px;text-align:left;vertical-align:top}.summary-table th{background:#eaf1f6}.photo-page{page-break-after:always;min-height:174mm}.photo-page:last-child{page-break-after:auto}.page-title{height:10mm;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #1769aa;margin-bottom:2mm;color:#1769aa;font-size:12px}.page-title span{display:block;font-size:8px;color:#64748b;margin-top:2px;font-weight:400}.page-no{font-size:8px;color:#64748b}.photo-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,1fr);gap:2.2mm;height:160mm}.photo-card{border:1px solid #cbd6df;border-radius:4px;padding:2mm;min-height:0;overflow:hidden;display:flex;flex-direction:column}.job-head{display:flex;justify-content:space-between;gap:4px;font-size:8px;line-height:1.1}.job-head span{font-size:7px;padding:1px 3px;border:1px solid #d5dee6;border-radius:8px;white-space:nowrap}.job-meta{font-size:6.5px;color:#52687a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:1mm 0}.photos{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm;min-height:0}.photo-box{border:1px solid #d7dfe6;border-radius:3px;padding:1mm;min-width:0}.photo-box .label{font-size:6px;font-weight:700;color:#52687a;margin-bottom:.7mm}.photo-box img{display:block;width:100%;height:22mm;object-fit:cover;background:#f7f9fb;border-radius:2px}.no-photo{height:22mm;display:flex;align-items:center;justify-content:center;background:#f7f9fb;color:#94a3b8;font-size:7px;border-radius:2px}.work{font-size:6.5px;line-height:1.15;margin-top:1mm;max-height:7mm;overflow:hidden}.footer{font-size:7px;color:#718096;margin-top:2mm}@media print{body{padding:0}.cover{padding:8mm}.photo-page{padding:6mm;min-height:190mm}.photo-grid{height:174mm}@page{size:A4 landscape;margin:0}}
 </style></head><body>
-<h1>BHR Solutions</h1><h2>Monthly HVAC Maintenance Report</h2>
-<div class="meta"><b>Month:</b> ${esc(pretty)} &nbsp; | &nbsp; <b>Generated:</b> ${esc(new Date().toLocaleString())}</div>
-<div class="summary"><div class="stat"><b>${jobs.length}</b><span>Total jobs</span></div><div class="stat"><b>${completed}</b><span>Completed</span></div><div class="stat"><b>${pending}</b><span>Pending / In progress</span></div><div class="stat"><b>${critical}</b><span>Critical</span></div></div>
-<h2>Maintenance Summary</h2>
-<table><thead><tr><th>Date</th><th>Technician</th><th>Location</th><th>Equipment</th><th>Type</th><th>Work performed</th><th>Parts / Materials</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="8">No reports saved for this month.</td></tr>'}</tbody></table>
-${photoJobs.length?`<section class="photo-section"><h2>📷 Before / After Photo Evidence</h2><p style="font-size:10px;color:#64748b">Photo evidence for ${photoJobs.length} maintenance job${photoJobs.length===1?'':'s'} recorded during ${esc(pretty)}.</p>${photoCards}</section>`:`<section class="photo-section"><h2>📷 Before / After Photo Evidence</h2><p style="font-size:10px;color:#64748b">No before/after photos were saved for this month.</p></section>`}
-<div class="footer">Generated by BHR Solutions Maintenance Report • Monthly report includes photo evidence when photos are available.</div>
-<script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script></body></html>`;
+<section class="cover"><h1>BHR Solutions</h1><h2>Monthly HVAC Maintenance Report</h2><div class="meta">${esc(pretty)} • Generated ${esc(new Date().toLocaleDateString())}</div>
+<div class="summary"><div class="stat"><b>${total}</b><span>Total jobs</span></div><div class="stat"><b>${completed}</b><span>Completed</span></div><div class="stat"><b>${pending}</b><span>Pending</span></div><div class="stat"><b>${critical}</b><span>Critical</span></div></div>
+<table class="summary-table"><thead><tr><th>Date</th><th>Location</th><th>Equipment</th><th>Type</th><th>Technician</th><th>Status</th></tr></thead><tbody>${jobs.map(j=>`<tr><td>${esc(j.date||'')}</td><td>${esc(j.location||'')}</td><td>${esc(j.equipment||'')}</td><td>${esc(j.type||'')}</td><td>${esc(j.technician||'')}</td><td>${esc(j.status||'')}</td></tr>`).join('')||'<tr><td colspan="6">No jobs recorded for this month.</td></tr>'}</tbody></table>
+<div class="footer">Photo evidence is provided on following pages. Up to 10 maintenance jobs are shown per photo page with before/after images.</div></section>
+${pages||`<section class="photo-page"><div class="page-title"><b>Before / After Photo Evidence</b></div><p style="font-size:10px;color:#64748b">No before/after photos were saved for this month.</p></section>`}
+</body></html>`;
 }
-
 function printMonthlyReport(month){
 let html=buildMonthlyReportHTML(month);
 let w=window.open('','_blank');
