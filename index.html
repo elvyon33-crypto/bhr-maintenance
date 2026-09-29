@@ -25,6 +25,7 @@ return `<div class="card job">
 <button class="btn" onclick="viewJob('${j.id}')">👁️ View</button>
 <button class="btn secondary" onclick="editJob('${j.id}')">✏️ Edit</button>
 <button class="btn green" onclick="shareJob('${j.id}')">↗️ Share</button>
+<button class="btn red" onclick="deleteJob('${j.id}')">🗑️ Delete</button>
 </div>
 </div>`}
 function newPage(){return `<h2>New Maintenance Report</h2><form onsubmit="submitJob(event)"><div class="formgrid"><div><label>Date</label><input name="date" type="date" value="${localDate()}" required></div><div><label>Technician</label><input name="technician" value="${esc(state.user)}" required></div></div><label>Maintenance / Work Type</label><select name="type" required>${types.map(t=>`<option>${t}</option>`).join('')}</select><div class="formgrid"><div><label>Location / Room No.</label><input name="location" list="locs" placeholder="e.g. Room 305 / AHU Plant Room" required><datalist id="locs">${state.locations.map(x=>`<option>${esc(x)}</option>`).join('')}</datalist></div><div><label>Equipment</label><input name="equipment" list="eqs" placeholder="e.g. FCU-305 / AHU-01"><datalist id="eqs">${state.equipment.map(x=>`<option>${esc(x)}</option>`).join('')}</datalist></div></div><label>Complaint / Observation</label><textarea name="complaint" placeholder="What did you find?"></textarea><div class="formgrid">
@@ -65,6 +66,17 @@ save();state.page='jobs';render();alert('Maintenance report saved successfully.'
 }
 
 function getJob(id){return state.jobs.find(x=>String(x.id)===String(id))}
+function deleteJob(id){
+let j=getJob(id);
+if(!j)return alert('Job not found.');
+let label=`${j.date||''} — ${j.location||'No location'} — ${j.equipment||'No equipment'}`.replace(/^ — | — $/g,'');
+if(confirm(`Delete this maintenance record?\n\n${label}\n\nThis action cannot be undone unless you have a backup.`)){
+state.jobs=state.jobs.filter(x=>String(x.id)!==String(id));
+save();
+render();
+alert('Maintenance record deleted.');
+}
+}
 function viewJob(id){
 let j=getJob(id); if(!j)return alert('Job not found.');
 let photos='';
