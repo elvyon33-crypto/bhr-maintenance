@@ -1,0 +1,615 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a2540"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="BHR Maintenance"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><title>Maintenance Report — BHR Solutions</title><style>
+:root{--navy:#0b1f33;--blue:#1769aa;--bg:#f4f7fa;--green:#168a55;--red:#c74444;--muted:#64748b}*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#122033}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:900px;margin:auto;min-height:100vh;background:#fff}.top{background:linear-gradient(135deg,#09233d,#1769aa);color:white;padding:22px 18px 18px}.brand{display:flex;justify-content:space-between;align-items:center}.brand h1{margin:0;font-size:21px}.brand small{opacity:.8}.user{font-size:12px;background:#ffffff20;padding:7px 10px;border-radius:20px}.nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#fff;border-bottom:1px solid #e7edf3;position:sticky;top:0;z-index:5}.nav button{border:0;background:#eef3f7;color:#294158;border-radius:10px;padding:9px 12px;white-space:nowrap}.nav button.active{background:var(--blue);color:#fff}.content{padding:16px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{border:1px solid #e4eaf0;border-radius:14px;padding:14px;background:#fff;box-shadow:0 2px 8px #09233d08}.stat b{font-size:26px;display:block}.stat span{font-size:12px;color:var(--muted)}h2{font-size:20px;margin:4px 0 14px}h3{font-size:15px;margin:0 0 8px}.section{margin:18px 0}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:#fff}.btn.secondary{background:#e9eef3;color:#1e3a52}.btn.green{background:var(--green)}.btn.red{background:var(--red)}label{font-size:12px;font-weight:700;color:#41566b;display:block;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #ccd7e1;border-radius:9px;background:#fff}textarea{min-height:85px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo{border:2px dashed #c8d4df;border-radius:12px;min-height:110px;display:flex;align-items:center;justify-content:center;color:#718397;background:#f8fafc;overflow:hidden}.photo img{width:100%;height:150px;object-fit:cover}.badge{font-size:11px;padding:5px 8px;border-radius:20px;background:#e9f6ef;color:#147445}.badge.pending{background:#fff2dc;color:#9a6200}.badge.repair{background:#feecec;color:#a52f2f}.job{margin-bottom:10px}.job p{margin:5px 0;color:#596d80;font-size:13px}.empty{text-align:center;color:#718397;padding:35px}.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#09233d,#1769aa);padding:20px}.loginbox{background:white;border-radius:18px;padding:25px;max-width:390px;width:100%;box-shadow:0 15px 50px #0003}.logo{width:58px;height:58px;border-radius:15px;background:#1769aa;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;margin-bottom:15px}.footer{padding:20px;text-align:center;color:#8796a6;font-size:11px}.hidden{display:none!important}@media(max-width:600px){.formgrid{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.content{padding:13px}.top{padding-top:18px}}
+
+.installbar{display:none;background:#eaf4fb;border:1px solid #c7e0ef;border-radius:12px;padding:11px 12px;margin-bottom:12px}
+.installbar.show{display:block}.installbar b{display:block;margin-bottom:4px}.installbar span{font-size:12px;color:#52687a}.backupbox{border:1px solid #dce6ee;border-radius:14px;padding:15px;margin-bottom:12px;background:#fbfdff}.backupicon{font-size:30px}.filebtn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;background:#e9eef3;color:#1e3a52;cursor:pointer;font-weight:600}
+.report-photo-thumb{width:74px;height:54px;object-fit:cover;border:1px solid #d5dde5;border-radius:7px;cursor:pointer;background:#f5f7fa;display:block}.report-photo-cell{min-width:170px}.report-photo-pair{display:flex;gap:7px;align-items:flex-start;flex-wrap:wrap}.report-photo-pair>div{width:74px;text-align:center;font-size:9px;color:#64748b}.photo-empty{display:inline-block;width:74px;height:54px;border:1px dashed #cbd5e1;border-radius:7px;font-size:9px;color:#94a3b8;padding:17px 4px 0;text-align:center;box-sizing:border-box}.photo-evidence{margin-top:18px}.photo-evidence-card{border:1px solid #dbe5ed;border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}.photo-evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo-evidence-grid img{width:100%;max-height:240px;object-fit:contain;border:1px solid #ddd;border-radius:8px;background:#f8fafc}.photo-evidence-grid .no-photo{min-height:120px;border:1px dashed #cbd5e1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px}@media(max-width:700px){.photo-evidence-grid{grid-template-columns:1fr 1fr}.report-photo-thumb{width:66px;height:50px}}
+:root{--bg:#eef3f7;--sf:#fff;--ink:#0d2238;--mut:#587084;--ln:#dbe4ec;--brand:#1769aa;--onb:#fff;--hero:#0a2540;--ice:#dcecf9;--ok:#14805a;--okb:#e0f4ea;--warn:#a25d00;--warnb:#fff0d2;--bad:#c23a3a;--badb:#fde8e8;--inf:#1f63b5;--infb:#e2edfb;--amber:#f2a33a}
+:root[data-theme=dark]{--bg:#08131f;--sf:#0f2233;--ink:#e7f0f7;--mut:#8ea5b8;--ln:#1e3a52;--brand:#4aa3e0;--onb:#06121d;--hero:#12385a;--ice:#12324a;--ok:#4cc58f;--okb:#0f3326;--warn:#f0b04d;--warnb:#3a2a0c;--bad:#ff8a8a;--badb:#3d1a1a;--inf:#7db6f5;--infb:#122c4a;}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#08131f;--sf:#0f2233;--ink:#e7f0f7;--mut:#8ea5b8;--ln:#1e3a52;--brand:#4aa3e0;--onb:#06121d;--hero:#12385a;--ice:#12324a;--ok:#4cc58f;--okb:#0f3326;--warn:#f0b04d;--warnb:#3a2a0c;--bad:#ff8a8a;--badb:#3d1a1a;--inf:#7db6f5;--infb:#122c4a;}}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.app{background:none;max-width:960px}
+.top{background:var(--hero);color:#fff;border-bottom:3px solid var(--brand);padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 16px}
+.brand h1{font-size:18px;font-weight:700;letter-spacing:-.01em}.brand small{opacity:.75;font-size:12px}
+.bl{display:flex;gap:11px;align-items:center}.bl svg{color:#fff;flex:none}.hr{display:flex;gap:8px;align-items:center}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:0;background:#ffffff1c;color:#fff;display:grid;place-items:center;padding:0}
+.user{display:flex;align-items:center;gap:8px;background:#ffffff1c;border-radius:20px;padding:5px 5px 5px 12px;font-size:13px}
+.user button{border:0;background:#ffffff26;color:#fff;border-radius:50%;width:24px;height:24px;padding:0;line-height:1;font-size:15px}
+.nav{background:var(--bg);border-bottom:1px solid var(--ln);padding:10px 12px;gap:6px;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav button{display:flex;align-items:center;gap:7px;background:var(--sf);color:var(--mut);border:1px solid var(--ln);border-radius:999px;padding:8px 14px;font-weight:600;font-size:13px}
+.nav button.active{background:var(--brand);color:var(--onb);border-color:var(--brand)}
+.content{padding:16px 16px 100px}
+h2{font-size:22px;letter-spacing:-.02em}h3{color:var(--ink)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;box-shadow:none}
+.card[style*="f5fbf7"]{background:var(--okb)!important;border-color:var(--ln)!important}
+.btn{background:var(--brand);color:var(--onb);font-weight:600}.btn:active{transform:translateY(1px)}
+.btn.secondary{background:var(--ice);color:var(--brand)}
+.btn.green{background:var(--ok);color:var(--onb)}
+.btn.red{background:none;color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+label{color:var(--mut);font-weight:600}
+input,select,textarea{background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:10px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.photo{background:var(--sf);border-color:var(--ln);color:var(--mut)}
+.stat b{font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.stat span{color:var(--mut)}
+.stat.bad b{color:var(--bad)}.stat.warn b{color:var(--warn)}.grid.k3{grid-template-columns:repeat(3,1fr)}
+.badge{font-weight:700;padding:4px 9px;background:var(--okb);color:var(--ok)}
+.badge.pending{background:var(--warnb);color:var(--warn)}.badge.repair{background:var(--badb);color:var(--bad)}.badge.info{background:var(--infb);color:var(--inf)}
+.hero{background:var(--hero);color:#fff;border-radius:20px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}
+.hero small{opacity:.75}.hero h2{color:#fff;margin:4px 0 6px}.hero p{margin:0;opacity:.85;font-size:14px}.hero .btn{background:#fff;color:#0a2540;margin-top:14px}
+.ring{width:108px;height:108px;flex:none}.rg-bg{fill:none;stroke:#ffffff26;stroke-width:9}
+.rg-fg{fill:none;stroke:var(--amber);stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s}
+.ring text{fill:#fff;font-size:20px;font-weight:700}
+.bars{display:flex;gap:8px;align-items:flex-end;height:104px;margin-top:10px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%;font-size:11px;color:var(--mut)}
+.bar i{display:block;width:100%;border-radius:6px 6px 3px 3px;background:var(--ice)}.bar.today i{background:var(--brand)}
+.bar em{font-style:normal;font-weight:700;color:var(--ink);min-height:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--ln);background:var(--sf);color:var(--mut);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600}
+.chip.on{background:var(--brand);color:var(--onb);border-color:var(--brand)}.count{font-size:12px;color:var(--mut);margin:0 0 8px}
+.job{border-left:4px solid var(--ln);margin-bottom:10px}.job.p-Critical{border-left-color:var(--bad)}.job.p-High{border-left-color:var(--amber)}
+.jt b{display:block;font-size:16px}.jt span{font-size:13px;color:var(--mut)}
+.job .meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--mut);margin:8px 0 0}
+.job .work{color:var(--ink);margin:8px 0 0;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jobactions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.jobactions .btn,.card .row .btn{padding:8px 13px;font-size:13px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer}
+.item b{display:block}.item span{font-size:12px;color:var(--mut)}.item svg{color:var(--mut);flex:none}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;background:var(--amber);color:#1b1200;display:grid;place-items:center;padding:0;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:9}
+#toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,16px);background:var(--hero);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.login{background:var(--hero)}.loginbox{background:var(--sf);border-radius:20px}.loginbox .sub{color:var(--mut);margin:0 0 6px}
+.logo{background:var(--hero);color:#fff;width:64px;height:64px;border-radius:18px}
+.installbar{background:var(--ice);border-color:var(--ln)}.installbar span{color:var(--mut)}
+.backupbox{background:var(--sf);border-color:var(--ln)}.filebtn{background:var(--ice);color:var(--brand)}
+.footer{color:var(--mut)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><div id="root"></div><script>
+applyTheme();
+const state={user:localStorage.getItem('mr_user')||'',page:(location.search.indexOf('new=1')>-1?'new':'dashboard'),jobs:[],locations:[],equipment:[],schedules:[]};
+let db=null,storageMode='IndexedDB';
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('IndexedDB unavailable'));return}let req=indexedDB.open('BHR_Maintenance_DB',1);req.onupgradeneeded=()=>{let d=req.result;if(!d.objectStoreNames.contains('data'))d.createObjectStore('data')};req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error||new Error('Database open failed'))})}
+function dbGet(key){return new Promise((resolve,reject)=>{try{let r=db.transaction('data','readonly').objectStore('data').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}catch(e){reject(e)}})}
+function dbSet(key,value){return new Promise((resolve,reject)=>{try{let r=db.transaction('data','readwrite').objectStore('data').put(value,key);r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)}catch(e){reject(e)}})}
+async function initStorage(){
+ try{
+  await openDB();
+  let existing=await dbGet('state');
+  if(existing && Array.isArray(existing.jobs)){
+   state.jobs=existing.jobs;state.locations=existing.locations||[];state.equipment=existing.equipment||[];state.schedules=existing.schedules||[];
+  }else{
+   state.jobs=JSON.parse(localStorage.getItem('mr_jobs')||'[]');
+   state.locations=JSON.parse(localStorage.getItem('mr_locations')||'[]');
+   state.equipment=JSON.parse(localStorage.getItem('mr_equipment')||'[]');
+   state.schedules=JSON.parse(localStorage.getItem('mr_schedules')||'[]');
+   await dbSet('state',{jobs:state.jobs,locations:state.locations,equipment:state.equipment,schedules:state.schedules});
+  }
+  localStorage.removeItem('mr_jobs');localStorage.removeItem('mr_locations');localStorage.removeItem('mr_equipment');localStorage.removeItem('mr_schedules');
+  storageMode='IndexedDB';
+ }catch(e){
+  storageMode='Browser fallback';
+  state.jobs=JSON.parse(localStorage.getItem('mr_jobs')||'[]');
+  state.locations=JSON.parse(localStorage.getItem('mr_locations')||'[]');
+  state.equipment=JSON.parse(localStorage.getItem('mr_equipment')||'[]');
+  state.schedules=JSON.parse(localStorage.getItem('mr_schedules')||'[]');
+ }
+ render();
+}
+
+function localDate(d=new Date()){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function monthKey(d){return String(d||'').slice(0,7)}
+function monthName(m){const [y,mo]=m.split('-');return new Date(Number(y),Number(mo)-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}
+const types=['Room Filter Cleaning','Office Filter Cleaning','AHU Coil Cleaning','AHU Filter Cleaning / Replacement','DVM Coil Cleaning','DVM Maintenance','Cold Room Cleaning','Freezer Cleaning','Preventive Maintenance','Repair','Breakdown','Inspection','Other'];
+function save(){
+ const snapshot={jobs:state.jobs,locations:state.locations,equipment:state.equipment,schedules:state.schedules};
+ if(db){dbSet('state',snapshot).catch(()=>{storageMode='Browser fallback';localStorage.setItem('mr_jobs',JSON.stringify(state.jobs));localStorage.setItem('mr_locations',JSON.stringify(state.locations));localStorage.setItem('mr_equipment',JSON.stringify(state.equipment));localStorage.setItem('mr_schedules',JSON.stringify(state.schedules))})}
+ else{localStorage.setItem('mr_jobs',JSON.stringify(state.jobs));localStorage.setItem('mr_locations',JSON.stringify(state.locations));localStorage.setItem('mr_equipment',JSON.stringify(state.equipment));localStorage.setItem('mr_schedules',JSON.stringify(state.schedules))}
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const IC={home:'M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z',plus:'M12 5v14M5 12h14',list:'M9 4h6v3H9zM7 5H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2M8 12h8M8 16h5',building:'M4 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17M15 9h4a1 1 0 0 1 1 1v11M2 21h20M8 8h3M8 12h3M8 16h3',wrench:'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z',calendar:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',chart:'M4 20V10M10 20V4M16 20v-8M22 20H2',save:'M12 3v12M7 10l5 5 5-5M4 21h16',moon:'M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z',sun:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'};
+function ic(n,s){s=s||18;return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`}
+function fan(s){const b='M12 12c1-2.6 1.4-5.6.6-8.6 3.2.9 5.6 3.4 6.2 6.6-2 1.4-4.4 2-6.8 2z';return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.6" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/>${[0,90,180,270].map(a=>`<path d="${b}" fill="currentColor" transform="rotate(${a} 12 12)"/>`).join('')}<circle cx="12" cy="12" r="1.7" fill="#f2a33a"/></svg>`}
+function toast(m){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>{t.className=''},2800)}
+function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+function isDark(){const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches}
+function applyTheme(){const t=localStorage.getItem('mr_theme');if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme')}
+function toggleTheme(){localStorage.setItem('mr_theme',isDark()?'light':'dark');applyTheme();render()}
+function navTo(p){if(p==='jobs'){state.q='';state.f='All'}go(p)}
+function render(){
+const root=document.getElementById('root');
+if(!state.user){root.innerHTML=`<div class="login"><div class="loginbox"><div class="logo">${fan(38)}</div><h2>Maintenance Report</h2><p class="sub">BHR Solutions HVAC job reports, photos and schedules.</p><label>Technician name</label><input id="loginName" placeholder="Enter your name" autocomplete="name" onkeydown="if(event.key==='Enter')login()"><label>Role</label><select id="loginRole"><option>Technician</option><option>HVAC Engineer</option><option>Supervisor</option><option>Admin</option></select><button class="btn" style="width:100%;margin-top:18px" onclick="login()">Sign in</button></div></div>`;return}
+const nav=[['dashboard','home','Home'],['new','plus','New report'],['jobs','list','Jobs'],['schedule','calendar','Schedule'],['reports','chart','Reports'],['locations','building','Locations'],['equipment','wrench','Equipment'],['backup','save','Backup']];
+root.innerHTML=`<div class="app"><div class="top"><div class="brand"><div class="bl">${fan(32)}<div><h1>Maintenance Report</h1><small>BHR Solutions • Hotel HVAC</small></div></div><div class="hr"><button class="iconbtn" onclick="toggleTheme()" aria-label="Switch light or dark mode">${ic(isDark()?'sun':'moon')}</button><div class="user">${esc(state.user)}<button onclick="logout()" aria-label="Sign out">×</button></div></div></div></div><div class="nav">${nav.map(x=>`<button class="${state.page===x[0]?'active':''}" onclick="navTo('${x[0]}')">${ic(x[1],16)}${x[2]}</button>`).join('')}</div><main class="content"><div id="installBar" class="installbar"><b>Install BHR Maintenance</b><span>Add this app to your phone home screen for quick access.</span><button class="btn" style="margin-top:8px" onclick="installPWA()">Install App</button></div>${pages[state.page]()}</main>${state.page==='new'?'':`<button class="fab" onclick="go('new')" aria-label="New report">${ic('plus',26)}</button>`}<div class="footer">BHR Solutions • Maintenance Report v10</div></div>`}
+function login(){let n=document.getElementById('loginName').value.trim();if(!n)return alert('Enter technician name');state.user=n;localStorage.setItem('mr_user',n);render()}function logout(){localStorage.removeItem('mr_user');state.user='';render()}function go(p){state.page=p;render();window.scrollTo(0,0)}
+function dashboard(){
+const today=localDate(),tj=state.jobs.filter(j=>j.date===today),ts=state.schedules.filter(x=>x.date===today);
+const total=tj.length+ts.length,done=tj.filter(j=>j.status==='Completed').length+ts.filter(x=>x.status==='Completed').length;
+const pct=total?Math.round(done/total*100):0,C=263.9;
+const open=state.jobs.filter(j=>j.status!=='Completed'),urgent=open.filter(j=>j.priority==='Critical'||j.priority==='High');
+const overdue=state.schedules.filter(x=>(x.date||'')<today&&x.status!=='Completed').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=localDate(d);days.push({k,n:state.jobs.filter(j=>j.date===k).length,l:d.toLocaleDateString(undefined,{weekday:'short'})})}
+const mx=Math.max(1,...days.map(d=>d.n)),wk=days.reduce((a,d)=>a+d.n,0);
+const ts5=ts.slice().sort((a,b)=>(a.time||'').localeCompare(b.time||'')).slice(0,5);
+return `<div class="hero"><div><small>${new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}</small><h2>${greet()}, ${esc(state.user)}</h2><p>${total?`${done} of ${total} tasks done today`:'Nothing logged for today yet'}</p><button class="btn" onclick="go('new')">New report</button></div><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="${pct}% of today's work done"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42" stroke-dasharray="${C}" stroke-dashoffset="${(C*(1-pct/100)).toFixed(1)}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle">${pct}%</text></svg></div>
+<div class="grid k3"><div class="card stat"><b>${open.length}</b><span>Open jobs</span></div><div class="card stat ${urgent.length?'bad':''}"><b>${urgent.length}</b><span>High / critical</span></div><div class="card stat ${overdue.length?'warn':''}"><b>${overdue.length}</b><span>Overdue visits</span></div></div>
+<div class="card section"><div class="row between"><h3>Last 7 days</h3><span class="badge info">${wk} report${wk===1?'':'s'}</span></div><div class="bars">${days.map(d=>`<div class="bar ${d.k===today?'today':''}" title="${d.k}: ${d.n}"><em>${d.n||''}</em><i style="height:${Math.max(4,Math.round(d.n/mx*58))}px"></i><span>${d.l}</span></div>`).join('')}</div></div>
+${(urgent.length||overdue.length)?`<div class="section"><h3>Needs attention</h3>${urgent.slice(0,3).map(jobCard).join('')}${overdue.slice(0,3).map(scheduleCard).join('')}</div>`:''}
+<div class="section"><div class="row between"><h3>Today's schedule</h3><button class="btn secondary" onclick="go('schedule')">View all</button></div>${ts5.length?ts5.map(scheduleCard).join(''):`<div class="card empty">No visits scheduled for today.</div>`}</div>
+<div class="section"><h3>Today's reports</h3>${tj.length?tj.slice().reverse().map(jobCard).join(''):`<div class="card empty">No reports today.<br><button class="btn" style="margin-top:12px" onclick="go('new')">Create first report</button></div>`}</div>`}
+function jobCard(j){
+const sc=j.status==='Completed'?'':(j.status==='In Progress'?'info':'pending'),pr=j.priority||'Normal';
+return `<div class="card job p-${esc(pr)}"><div class="row between"><div class="jt"><b>${esc(j.location||'No location')}</b><span>${esc(j.equipment||'No equipment')}</span></div><span class="badge ${sc}">${esc(j.status)}</span></div>
+<div class="meta"><span>${esc(j.type)}</span><span>${esc(j.technician)}</span><span>${esc(j.date)}</span>${pr!=='Normal'?`<span class="badge ${pr==='Critical'?'repair':'pending'}">${esc(pr)}</span>`:''}${j.before?'<span class="badge info">Before photo</span>':''}${j.after?'<span class="badge info">After photo</span>':''}</div>
+${j.work?`<p class="work">${esc(j.work)}</p>`:''}
+<div class="jobactions"><button class="btn" onclick="viewJob('${j.id}')">View</button><button class="btn secondary" onclick="editJob('${j.id}')">Edit</button><button class="btn secondary" onclick="shareJob('${j.id}')">Share</button><button class="btn red" onclick="deleteJob('${j.id}')">Delete</button></div></div>`}
+function newPage(){return `<h2>New Maintenance Report</h2><form onsubmit="submitJob(event)"><div class="formgrid"><div><label>Date</label><input name="date" type="date" value="${localDate()}" required></div><div><label>Technician</label><input name="technician" value="${esc(state.user)}" required></div></div><label>Maintenance / Work Type</label><select name="type" required>${types.map(t=>`<option>${t}</option>`).join('')}</select><div class="formgrid"><div><label>Location / Room No.</label><input name="location" list="locs" placeholder="e.g. Room 305 / AHU Plant Room" required><datalist id="locs">${state.locations.map(x=>`<option>${esc(x)}</option>`).join('')}</datalist></div><div><label>Equipment</label><input name="equipment" list="eqs" placeholder="e.g. FCU-305 / AHU-01"><datalist id="eqs">${state.equipment.map(x=>`<option>${esc(x)}</option>`).join('')}</datalist></div></div><label>Complaint / Observation</label><textarea name="complaint" placeholder="What did you find?"></textarea><div class="formgrid">
+<div>
+<label>Before Photo</label>
+<div class="row" style="margin-bottom:8px">
+<button type="button" class="btn" onclick="document.getElementById('beforeCamera').click()">Camera</button>
+<button type="button" class="btn secondary" onclick="document.getElementById('beforeGallery').click()">Gallery</button>
+</div>
+<input id="beforeCamera" type="file" accept="image/*" capture="environment" class="hidden" onchange="setPhoto(this,'before','beforePrev')">
+<input id="beforeGallery" type="file" accept="image/*" class="hidden" onchange="setPhoto(this,'before','beforePrev')">
+<div class="photo" id="beforePrev">Select before photo</div>
+<input id="beforeData" name="before" type="hidden">
+</div>
+<div>
+<label>After Photo</label>
+<div class="row" style="margin-bottom:8px">
+<button type="button" class="btn" onclick="document.getElementById('afterCamera').click()">Camera</button>
+<button type="button" class="btn secondary" onclick="document.getElementById('afterGallery').click()">Gallery</button>
+</div>
+<input id="afterCamera" type="file" accept="image/*" capture="environment" class="hidden" onchange="setPhoto(this,'after','afterPrev')">
+<input id="afterGallery" type="file" accept="image/*" class="hidden" onchange="setPhoto(this,'after','afterPrev')">
+<div class="photo" id="afterPrev">Select after photo</div>
+<input id="afterData" name="after" type="hidden">
+</div>
+</div><div class="section"><h3>HVAC Readings (optional)</h3><div class="formgrid">${['Room Temp °C','Supply Air °C','Return Air °C','Suction PSI','Discharge PSI','Compressor A','Fan A','Voltage L1-L2','Voltage L2-L3','Voltage L3-L1'].map((x,i)=>`<div><label>${x}</label><input name="r${i}" inputmode="decimal"></div>`).join('')}</div></div><label>Work Performed</label><textarea name="work" placeholder="Describe cleaning, repair, parts replaced, adjustments, etc." required></textarea><label>Parts / Materials Used</label><textarea name="parts" placeholder="Filter, belt, refrigerant, capacitor, contactor, etc."></textarea><label>Remarks</label><textarea name="remarks" placeholder="Unit condition after work / recommendations"></textarea><div class="formgrid"><div><label>Status</label><select name="status"><option>Completed</option><option>In Progress</option><option>Pending</option></select></div><div><label>Priority</label><select name="priority"><option>Normal</option><option>High</option><option>Critical</option></select></div></div><button class="btn green" style="width:100%;margin-top:16px">Save Maintenance Report</button></form>`}
+function setPhoto(inp,type,id){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=e=>{document.getElementById(id).innerHTML=`<img src="${e.target.result}">`;document.getElementById(type+'Data').value=e.target.result};r.readAsDataURL(f)}
+function submitJob(e){
+e.preventDefault();
+let f=new FormData(e.target),j=Object.fromEntries(f.entries());
+j.id=Date.now();j.technician=state.user;
+j.before=document.getElementById('beforeData').value||'';
+j.after=document.getElementById('afterData').value||'';
+state.jobs.push(j);
+if(j.location&&!state.locations.includes(j.location))state.locations.push(j.location);
+if(j.equipment&&!state.equipment.includes(j.equipment))state.equipment.push(j.equipment);
+save();state.q='';state.f='All';state.page='jobs';render();window.scrollTo(0,0);toast('Maintenance report saved successfully.');
+}
+
+function getJob(id){return state.jobs.find(x=>String(x.id)===String(id))}
+function deleteJob(id){
+let j=getJob(id);
+if(!j)return alert('Job not found.');
+let label=`${j.date||''} — ${j.location||'No location'} — ${j.equipment||'No equipment'}`.replace(/^ — | — $/g,'');
+if(confirm(`Delete this maintenance record?\n\n${label}\n\nThis action cannot be undone unless you have a backup.`)){
+state.jobs=state.jobs.filter(x=>String(x.id)!==String(id));
+save();
+render();
+toast('Maintenance record deleted.');
+}
+}
+function viewJob(id){
+let j=getJob(id); if(!j)return alert('Job not found.');
+let photos='';
+if(j.before)photos+=`<div><h3>Before Photo</h3><img src="${j.before}" style="width:100%;max-height:320px;object-fit:contain;border-radius:10px;border:1px solid #ddd"></div>`;
+if(j.after)photos+=`<div><h3>After Photo</h3><img src="${j.after}" style="width:100%;max-height:320px;object-fit:contain;border-radius:10px;border:1px solid #ddd"></div>`;
+let readings=['Room Temp °C','Supply Air °C','Return Air °C','Suction PSI','Discharge PSI','Compressor A','Fan A','Voltage L1-L2','Voltage L2-L3','Voltage L3-L1'];
+let readingHtml=readings.map((x,i)=>j['r'+i]?`<div class="card"><b>${esc(x)}</b><div style="margin-top:4px">${esc(j['r'+i])}</div></div>`:'').join('');
+document.getElementById('root').innerHTML=`<div class="app">
+<div class="top"><div class="brand"><div><h1>Maintenance Report</h1><small>BHR Solutions • Job Details</small></div></div></div>
+<main class="content">
+<div class="row between"><h2>Job Details</h2><button class="btn secondary" onclick="render()">← Back</button></div>
+<div class="card">
+<h3>${esc(j.location||'No location')} • ${esc(j.equipment||'No equipment')}</h3>
+<p><b>Date:</b> ${esc(j.date)} &nbsp; <b>Technician:</b> ${esc(j.technician)}</p>
+<p><b>Type:</b> ${esc(j.type)} &nbsp; <b>Status:</b> ${esc(j.status)} &nbsp; <b>Priority:</b> ${esc(j.priority)}</p>
+<h3>Complaint / Observation</h3><p>${esc(j.complaint||'—')}</p>
+<h3>Work Performed</h3><p>${esc(j.work||'—')}</p>
+<h3>Parts / Materials Used</h3><p>${esc(j.parts||'—')}</p>
+<h3>Remarks</h3><p>${esc(j.remarks||'—')}</p>
+</div>
+${readingHtml?`<div class="section"><h3>HVAC Readings</h3><div class="grid">${readingHtml}</div></div>`:''}
+${photos?`<div class="section"><h3>Before / After Photos</h3><div class="formgrid">${photos}</div></div>`:''}
+<div class="row" style="margin-top:15px;flex-wrap:wrap">
+<button class="btn" onclick="editJob('${j.id}')">Edit Job</button>
+<button class="btn green" onclick="shareJob('${j.id}')">Share Job</button>
+<button class="btn secondary" onclick="printSingleJob('${j.id}')">Print</button>
+</div>
+</main><div class="footer">BHR Solutions • Maintenance Report</div></div>`;
+}
+
+function editJob(id){
+let j=getJob(id); if(!j)return alert('Job not found.');
+state.page='edit_'+id;
+renderEditPage(j);
+}
+
+function renderEditPage(j){
+const readings=['Room Temp °C','Supply Air °C','Return Air °C','Suction PSI','Discharge PSI','Compressor A','Fan A','Voltage L1-L2','Voltage L2-L3','Voltage L3-L1'];
+document.getElementById('root').innerHTML=`<div class="app">
+<div class="top"><div class="brand"><div><h1>Maintenance Report</h1><small>BHR Solutions • Edit Job</small></div></div></div>
+<main class="content"><div class="row between"><h2>Edit Maintenance Report</h2><button class="btn secondary" onclick="go('jobs')">← Back</button></div>
+<form onsubmit="updateJob(event,'${j.id}')">
+<div class="formgrid"><div><label>Date</label><input name="date" type="date" value="${esc(j.date)}" required></div><div><label>Technician</label><input name="technician" value="${esc(j.technician)}" required></div></div>
+<label>Maintenance / Work Type</label><select name="type">${types.map(t=>`<option ${t===j.type?'selected':''}>${t}</option>`).join('')}</select>
+<div class="formgrid"><div><label>Location / Room No.</label><input name="location" value="${esc(j.location)}" required></div><div><label>Equipment</label><input name="equipment" value="${esc(j.equipment)}"></div></div>
+<label>Complaint / Observation</label><textarea name="complaint">${esc(j.complaint)}</textarea>
+<div class="formgrid">
+<div><label>Before Photo</label>${j.before?`<img src="${j.before}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:7px">`:''}<input id="editBefore" type="file" accept="image/*" onchange="replaceEditPhoto(this,'editBeforeData')"><input id="editBeforeData" name="before" type="hidden" value="${esc(j.before)}"></div>
+<div><label>After Photo</label>${j.after?`<img src="${j.after}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:7px">`:''}<input id="editAfter" type="file" accept="image/*" onchange="replaceEditPhoto(this,'editAfterData')"><input id="editAfterData" name="after" type="hidden" value="${esc(j.after)}"></div>
+</div>
+<div class="section"><h3>HVAC Readings</h3><div class="formgrid">${readings.map((x,i)=>`<div><label>${x}</label><input name="r${i}" value="${esc(j['r'+i]||'')}" inputmode="decimal"></div>`).join('')}</div></div>
+<label>Work Performed</label><textarea name="work" required>${esc(j.work)}</textarea>
+<label>Parts / Materials Used</label><textarea name="parts">${esc(j.parts)}</textarea>
+<label>Remarks</label><textarea name="remarks">${esc(j.remarks)}</textarea>
+<div class="formgrid"><div><label>Status</label><select name="status">${['Completed','In Progress','Pending'].map(x=>`<option ${x===j.status?'selected':''}>${x}</option>`).join('')}</select></div><div><label>Priority</label><select name="priority">${['Normal','High','Critical'].map(x=>`<option ${x===j.priority?'selected':''}>${x}</option>`).join('')}</select></div></div>
+<button class="btn green" style="width:100%;margin-top:16px">Save Changes</button>
+</form></main><div class="footer">BHR Solutions • Maintenance Report</div></div>`;
+}
+
+function replaceEditPhoto(inp,target){
+let f=inp.files[0];if(!f)return;
+let r=new FileReader();r.onload=e=>document.getElementById(target).value=e.target.result;r.readAsDataURL(f);
+}
+
+function updateJob(e,id){
+e.preventDefault();
+let old=getJob(id);if(!old)return alert('Job not found.');
+let f=new FormData(e.target);
+let updated=Object.fromEntries(f.entries());
+updated.id=old.id;
+updated.before=document.getElementById('editBeforeData').value||old.before||'';
+updated.after=document.getElementById('editAfterData').value||old.after||'';
+let idx=state.jobs.findIndex(x=>String(x.id)===String(id));
+state.jobs[idx]=updated;
+if(updated.location&&!state.locations.includes(updated.location))state.locations.push(updated.location);
+if(updated.equipment&&!state.equipment.includes(updated.equipment))state.equipment.push(updated.equipment);
+save();state.q='';state.f='All';state.page='jobs';render();window.scrollTo(0,0);toast('Maintenance report updated successfully.');
+}
+
+async function shareJob(id){
+let j=getJob(id);if(!j)return alert('Job not found.');
+let text=`BHR Solutions — Maintenance Report
+Date: ${j.date}
+Technician: ${j.technician}
+Location: ${j.location||'-'}
+Equipment: ${j.equipment||'-'}
+Type: ${j.type}
+Status: ${j.status}
+Priority: ${j.priority}
+Work: ${j.work||'-'}
+Parts: ${j.parts||'-'}
+Remarks: ${j.remarks||'-'}`;
+if(navigator.share){
+try{await navigator.share({title:'BHR Solutions Maintenance Report',text});}catch(e){}
+}else{
+try{await navigator.clipboard.writeText(text);toast('Report details copied. You can paste them into WhatsApp, email, or another app.');}
+catch(e){prompt('Copy this report:',text);}
+}
+}
+
+function printSingleJob(id){
+let j=getJob(id);if(!j)return alert('Job not found.');
+let w=window.open('','_blank');if(!w)return alert('Please allow pop-ups to print the report.');
+let photos='';
+if(j.before)photos+=`<div><h3>Before</h3><img src="${j.before}" style="max-width:100%;max-height:300px"></div>`;
+if(j.after)photos+=`<div><h3>After</h3><img src="${j.after}" style="max-width:100%;max-height:300px"></div>`;
+w.document.write(`<html><head><title>Maintenance Report ${esc(j.id)}</title><style>body{font-family:Arial;padding:30px;color:#122033}h1{color:#1769aa}.box{border:1px solid #ccc;padding:12px;margin:10px 0}img{border:1px solid #ddd;border-radius:8px}
+.installbar{display:none;background:#eaf4fb;border:1px solid #c7e0ef;border-radius:12px;padding:11px 12px;margin-bottom:12px}
+.installbar.show{display:block}.installbar b{display:block;margin-bottom:4px}.installbar span{font-size:12px;color:#52687a}.backupbox{border:1px solid #dce6ee;border-radius:14px;padding:15px;margin-bottom:12px;background:#fbfdff}.backupicon{font-size:30px}.filebtn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;background:#e9eef3;color:#1e3a52;cursor:pointer;font-weight:600}
+</style></head><body>
+<h1>BHR Solutions</h1><h2>Maintenance Report</h2>
+<div class="box"><b>Date:</b> ${esc(j.date)}<br><b>Technician:</b> ${esc(j.technician)}<br><b>Location:</b> ${esc(j.location)}<br><b>Equipment:</b> ${esc(j.equipment)}<br><b>Type:</b> ${esc(j.type)}<br><b>Status:</b> ${esc(j.status)}<br><b>Priority:</b> ${esc(j.priority)}</div>
+<div class="box"><b>Complaint / Observation</b><p>${esc(j.complaint||'-')}</p><b>Work Performed</b><p>${esc(j.work||'-')}</p><b>Parts / Materials</b><p>${esc(j.parts||'-')}</p><b>Remarks</b><p>${esc(j.remarks||'-')}</p></div>
+<div style="display:flex;gap:20px;flex-wrap:wrap">${photos}</div><script>window.print()<\/script></body></html>`);w.document.close();
+}
+
+function jobListHTML(){
+const q=(state.q||'').toLowerCase(),f=state.f||'All';
+const r=state.jobs.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||Number(b.id)-Number(a.id)).filter(j=>(f==='All'||j.status===f)&&(!q||[j.location,j.equipment,j.type,j.work,j.technician,j.complaint,j.date].join(' ').toLowerCase().includes(q)));
+return r.length?`<p class="count">${r.length} report${r.length===1?'':'s'}</p>`+r.map(jobCard).join(''):`<div class="card empty">${state.jobs.length?'No reports match your search.':'No reports yet. Tap New report to log your first job.'}</div>`}
+function setQ(v){state.q=v;document.getElementById('jobList').innerHTML=jobListHTML()}
+function setF(f){state.f=f;render()}
+function jobs(){return `<div class="row between"><h2>Maintenance Jobs</h2><button class="btn" onclick="go('new')">New report</button></div><input id="jq" type="search" placeholder="Search location, equipment, work or technician" value="${esc(state.q||'')}" oninput="setQ(this.value)"><div class="chips">${['All','Completed','In Progress','Pending'].map(f=>`<button class="chip ${(state.f||'All')===f?'on':''}" onclick="setF('${f}')">${f}</button>`).join('')}</div><div id="jobList">${jobListHTML()}</div>`}
+function openJobsFor(e){state.q=decodeURIComponent(e);state.f='All';go('jobs')}
+function locations(){const c={};state.jobs.forEach(j=>{if(j.location)c[j.location]=(c[j.location]||0)+1});return `<div class="row between"><h2>Locations</h2><button class="btn" onclick="addLocation()">Add location</button></div>${state.locations.length?state.locations.slice().sort().map(x=>`<div class="card item" onclick="openJobsFor('${encodeURIComponent(x)}')"><div><b>${esc(x)}</b><span>${c[x]?c[x]+' report'+(c[x]===1?'':'s'):'No reports yet'}</span></div>${ic('building')}</div>`).join(''):`<div class="card empty">Add rooms, offices, plant rooms, kitchens, cold rooms and other areas.</div>`}`}
+function equipment(){const c={},l={};state.jobs.forEach(j=>{if(j.equipment){c[j.equipment]=(c[j.equipment]||0)+1;if((j.date||'')>(l[j.equipment]||''))l[j.equipment]=j.date}});return `<div class="row between"><h2>Equipment</h2><button class="btn" onclick="addEquipment()">Add equipment</button></div>${state.equipment.length?state.equipment.slice().sort().map(x=>`<div class="card item" onclick="openJobsFor('${encodeURIComponent(x)}')"><div><b>${esc(x)}</b><span>${c[x]?c[x]+' report'+(c[x]===1?'':'s')+', last service '+esc(l[x]):'No service logged yet'}</span></div>${ic('wrench')}</div>`).join(''):`<div class="card empty">Add AHUs, FCUs, DVMs, cold rooms, freezers and other equipment.</div>`}`}
+function addLocation(){let x=prompt('Location / Room No.');if(x){state.locations.push(x);save();render()}}function addEquipment(){let x=prompt('Equipment name / asset ID');if(x){state.equipment.push(x);save();render()}}
+
+function schedule(){
+let today=localDate();
+let todaySchedules=state.schedules.filter(x=>x.date===today);
+let pending=todaySchedules.filter(x=>x.status!=='Completed');
+let completed=todaySchedules.filter(x=>x.status==='Completed');
+return `<h2>Today's Schedule</h2>
+<div class="grid">
+<div class="card stat"><b>${todaySchedules.length}</b><span>Scheduled today</span></div>
+<div class="card stat"><b>${pending.length}</b><span>Pending today</span></div>
+<div class="card stat"><b>${completed.length}</b><span>Completed today</span></div>
+</div>
+<div class="row between section"><h3>Today's Work</h3><button class="btn" onclick="newSchedule()">+ Add Schedule</button></div>
+${todaySchedules.length?todaySchedules.slice().sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(scheduleCard).join(''):`<div class="card empty">No schedule for today.<br><button class="btn" style="margin-top:12px" onclick="newSchedule()">Create today's schedule</button></div>`}
+<div class="section"><h3>Pending for Today</h3>
+${pending.length?pending.map(scheduleCard).join(''):`<div class="card empty">No pending work for today.</div>`}
+</div>`;
+}
+
+function scheduleCard(s){
+return `<div class="card job">
+<div class="row between"><div><b>${esc(s.time||'No time')} — ${esc(s.location||'No location')}</b><br><span style="font-size:13px;color:#596d80">${esc(s.equipment||'')} • ${esc(s.task||'')}</span></div>
+<span class="badge ${s.status!=='Completed'?'pending':''}">${esc(s.status)}</span></div>
+<p><b>Technician:</b> ${esc(s.technician||'-')} &nbsp; <b>Priority:</b> ${esc(s.priority||'Normal')}</p>
+${s.notes?`<p>${esc(s.notes)}</p>`:''}
+<div class="row" style="margin-top:10px;flex-wrap:wrap">
+<button class="btn secondary" onclick="editSchedule('${s.id}')">Edit</button>
+<button class="btn green" onclick="completeSchedule('${s.id}')">${s.status==='Completed'?'Reopen':'✓ Complete'}</button>
+<button class="btn red" onclick="deleteSchedule('${s.id}')">Delete</button>
+</div></div>`;
+}
+
+function newSchedule(existing){
+let s=existing||{id:Date.now(),date:localDate(),time:'09:00',location:'',equipment:'',task:'',technician:state.user,status:'Pending',priority:'Normal',notes:''};
+showScheduleForm(s,false);
+}
+
+function editSchedule(id){
+let s=state.schedules.find(x=>String(x.id)===String(id));
+if(!s)return alert('Schedule not found.');
+showScheduleForm(s,true);
+}
+
+function showScheduleForm(s,isEdit){
+document.getElementById('root').innerHTML=`<div class="app">
+<div class="top"><div class="brand"><div><h1>Maintenance Report</h1><small>BHR Solutions • Schedule</small></div></div></div>
+<main class="content">
+<div class="row between"><h2>${isEdit?'Edit Schedule':'Add Schedule'}</h2><button class="btn secondary" onclick="go('schedule')">← Back</button></div>
+<form onsubmit="saveSchedule(event,'${s.id}',${isEdit})">
+<div class="formgrid">
+<div><label>Date</label><input name="date" type="date" value="${esc(s.date)}" required></div>
+<div><label>Time</label><input name="time" type="time" value="${esc(s.time)}" required></div>
+</div>
+<div class="formgrid">
+<div><label>Location / Room</label><input name="location" value="${esc(s.location)}" placeholder="e.g. Room 305 / AHU Plant Room" required></div>
+<div><label>Equipment</label><input name="equipment" value="${esc(s.equipment)}" placeholder="e.g. FCU-305 / AHU-01"></div>
+</div>
+<label>Scheduled Work</label><input name="task" value="${esc(s.task)}" placeholder="Filter cleaning / PM / repair / inspection" required>
+<label>Technician</label><input name="technician" value="${esc(s.technician||state.user)}" required>
+<div class="formgrid">
+<div><label>Status</label><select name="status">${['Pending','In Progress','Completed'].map(x=>`<option ${x===s.status?'selected':''}>${x}</option>`).join('')}</select></div>
+<div><label>Priority</label><select name="priority">${['Normal','High','Critical'].map(x=>`<option ${x===s.priority?'selected':''}>${x}</option>`).join('')}</select></div>
+</div>
+<label>Notes</label><textarea name="notes" placeholder="Special instructions / materials / access requirements">${esc(s.notes)}</textarea>
+<button class="btn green" style="width:100%;margin-top:16px">${isEdit?'Save Changes':'Save Schedule'}</button>
+</form></main><div class="footer">BHR Solutions • Maintenance Report</div></div>`;
+}
+
+function saveSchedule(e,id,isEdit){
+e.preventDefault();
+let f=new FormData(e.target),s=Object.fromEntries(f.entries());
+s.id=id;
+if(isEdit){
+let i=state.schedules.findIndex(x=>String(x.id)===String(id));
+if(i>=0)state.schedules[i]=s;
+}else state.schedules.push(s);
+save();state.page='schedule';render();toast(isEdit?'Schedule updated successfully.':'Schedule added successfully.');
+}
+
+function completeSchedule(id){
+let s=state.schedules.find(x=>String(x.id)===String(id));if(!s)return;
+s.status=s.status==='Completed'?'Pending':'Completed';
+save();render();
+}
+
+function deleteSchedule(id){
+let s=state.schedules.find(x=>String(x.id)===String(id));if(!s)return;
+if(confirm(`Delete scheduled work "${s.task}"?`)){
+state.schedules=state.schedules.filter(x=>String(x.id)!==String(id));
+save();render();
+}
+}
+
+function photoThumb(src,label='Photo',cls=''){if(!src)return `<span class="photo-empty">No ${esc(label)}</span>`;return `<img class="report-photo-thumb ${cls}" src="${src}" alt="${esc(label)}" onclick="openPhoto('${encodeURIComponent(src)}','${encodeURIComponent(label)}')">`}
+function openPhoto(encoded,labelEncoded){let src=decodeURIComponent(encoded),label=decodeURIComponent(labelEncoded);let w=window.open('','_blank');if(!w){alert('Please allow pop-ups to view the photo.');return;}w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(label)}</title><style>body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;color:#fff;font-family:Arial}img{max-width:96vw;max-height:88vh;object-fit:contain}.cap{padding:10px}</style></head><body><img src="${src}" alt="${esc(label)}"><div class="cap">${esc(label)}</div></body></html>`);w.document.close()}
+function reports(){
+let today=localDate();
+let currentMonth=today.slice(0,7);
+let selectedDate=localStorage.getItem('mr_report_date')||today;
+let selectedMonth=localStorage.getItem('mr_report_month')||currentMonth;
+let dayJobs=state.jobs.filter(j=>j.date===selectedDate);
+let monthJobs=state.jobs.filter(j=>monthKey(j.date)===selectedMonth);
+let completed=monthJobs.filter(j=>j.status==='Completed').length;
+let pending=monthJobs.filter(j=>j.status!=='Completed').length;
+let critical=monthJobs.filter(j=>j.priority==='Critical').length;
+let technicians=new Set(monthJobs.map(j=>j.technician).filter(Boolean)).size;
+let typesCount={};
+monthJobs.forEach(j=>typesCount[j.type]=(typesCount[j.type]||0)+1);
+
+return `<h2>Reports & Summary</h2>
+<div class="card" style="margin-bottom:12px">
+<h3>Daily Report</h3>
+<label>Select date</label>
+<input id="reportDate" type="date" value="${selectedDate}" onchange="changeReportDate(this.value)">
+<div class="grid" style="margin-top:10px">
+<div class="card stat"><b>${dayJobs.length}</b><span>Jobs on selected date</span></div>
+<div class="card stat"><b>${dayJobs.filter(j=>j.status==='Completed').length}</b><span>Completed</span></div>
+</div>
+<div style="margin-top:10px">${dayJobs.length?dayJobs.slice().reverse().map(jobCard).join(''):`<div class="empty">No saved reports for ${new Date(selectedDate+'T12:00:00').toLocaleDateString()}.</div>`}</div>
+<button class="btn secondary" onclick="printDailyReport('${selectedDate}')">Print selected day</button>
+</div>
+
+<div class="card" style="margin-bottom:12px">
+<h3>Monthly Report</h3>
+<label>Select month</label>
+<input id="reportMonth" type="month" value="${selectedMonth}" onchange="changeReportMonth(this.value)">
+<div class="grid" style="margin-top:10px">
+<div class="card stat"><b>${monthJobs.length}</b><span>Total jobs</span></div>
+<div class="card stat"><b>${completed}</b><span>Completed</span></div>
+<div class="card stat"><b>${pending}</b><span>Pending / In progress</span></div>
+<div class="card stat"><b>${critical}</b><span>Critical</span></div>
+</div>
+<div class="section">
+<div class="row between"><h3>Monthly overview — ${monthName(selectedMonth)}</h3><span class="badge">${technicians} technician${technicians===1?'':'s'}</span></div>
+${monthJobs.length?`<div class="card" style="margin-bottom:10px;overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:820px">
+<tr><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Date</th><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Location</th><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Equipment</th><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Type</th><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Technician</th><th style="text-align:left;padding:7px;border-bottom:1px solid #ddd">Status</th></tr>
+${monthJobs.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(j=>`<tr><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.date)}</td><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.location)}</td><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.equipment)}</td><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.type)}</td><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.technician)}</td><td style="padding:7px;border-bottom:1px solid #eee">${esc(j.status)}</td></tr>`).join('')}
+</table></div>`:`<div class="empty">No saved reports for ${monthName(selectedMonth)}.</div>`}
+</div>
+<div class="section"><h3>Work breakdown</h3>
+${Object.entries(typesCount).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="card" style="margin-bottom:7px"><div class="row between"><span>${esc(k)}</span><b>${v}</b></div></div>`).join('')||'<div class="empty">No data yet.</div>'}
+</div>
+<div class="row" style="flex-wrap:wrap">
+<button class="btn" onclick="printMonthlyReport('${selectedMonth}')">Print / Save monthly report</button>
+<button class="btn green" onclick="shareMonthlyReport('${selectedMonth}')">Share monthly report</button>
+</div>
+</div>`;
+}
+
+function changeReportDate(v){if(v){localStorage.setItem('mr_report_date',v);render()}}
+function changeReportMonth(v){if(v){localStorage.setItem('mr_report_month',v);render()}}
+function printDailyReport(date){
+let jobs=state.jobs.filter(j=>j.date===date);
+let pretty=new Date(date+'T12:00:00').toLocaleDateString();
+let rows=jobs.map(j=>`<tr><td>${esc(j.technician)}</td><td>${esc(j.location)}</td><td>${esc(j.equipment)}</td><td>${esc(j.type)}</td><td>${esc(j.work)}</td><td>${esc(j.status)}</td></tr>`).join('');
+let w=window.open('','_blank');
+if(!w)return alert('Please allow pop-ups to print the report.');
+w.document.write(`<html><head><title>BHR Solutions Daily Maintenance Report - ${pretty}</title><style>
+body{font-family:Arial;padding:30px;color:#122033}h1{color:#1769aa;margin-bottom:4px}h2{margin-top:0}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border:1px solid #ccc;padding:7px;text-align:left;vertical-align:top}.summary{padding:12px;background:#f4f7fa;margin:15px 0}
+
+.installbar{display:none;background:#eaf4fb;border:1px solid #c7e0ef;border-radius:12px;padding:11px 12px;margin-bottom:12px}
+.installbar.show{display:block}.installbar b{display:block;margin-bottom:4px}.installbar span{font-size:12px;color:#52687a}.backupbox{border:1px solid #dce6ee;border-radius:14px;padding:15px;margin-bottom:12px;background:#fbfdff}.backupicon{font-size:30px}.filebtn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;background:#e9eef3;color:#1e3a52;cursor:pointer;font-weight:600}
+</style></head><body><h1>BHR Solutions</h1><h2>Daily HVAC Maintenance Report</h2><p><b>Date:</b> ${pretty}</p><div class="summary"><b>Total jobs:</b> ${jobs.length} &nbsp; | &nbsp; <b>Completed:</b> ${jobs.filter(j=>j.status==='Completed').length} &nbsp; | &nbsp; <b>Pending/In progress:</b> ${jobs.filter(j=>j.status!=='Completed').length}</div>
+<table><tr><th>Technician</th><th>Location</th><th>Equipment</th><th>Type</th><th>Work performed</th><th>Status</th></tr>${rows||'<tr><td colspan="6">No reports saved for this date.</td></tr>'}</table><script>window.print()<\/script></body></html>`);
+w.document.close();
+}
+async function shareMonthlyReport(month){
+let jobs=state.jobs.filter(j=>monthKey(j.date)===month);
+let pretty=monthName(month);
+let completed=jobs.filter(j=>j.status==='Completed').length;
+let pending=jobs.filter(j=>j.status!=='Completed').length;
+let critical=jobs.filter(j=>j.priority==='Critical').length;
+let technicians=[...new Set(jobs.map(j=>j.technician).filter(Boolean))];
+let lines=[
+`BHR Solutions — Monthly HVAC Maintenance Report`,
+`Month: ${pretty}`,
+`Total jobs: ${jobs.length}`,
+`Completed: ${completed}`,
+`Pending / In progress: ${pending}`,
+`Critical: ${critical}`,
+`Technicians: ${technicians.length}`,
+``,
+`Job details:`,
+...jobs.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map((j,i)=>
+`${i+1}. ${j.date} | ${j.location||'-'} | ${j.equipment||'-'} | ${j.type||'-'} | ${j.technician||'-'} | ${j.status||'-'}\nWork: ${j.work||'-'}\nParts: ${j.parts||'-'}`
+)
+];
+let text=lines.join('\n');
+if(navigator.share){
+  try{
+    await navigator.share({title:`BHR Solutions Monthly Report — ${pretty}`,text});
+    return;
+  }catch(e){
+    if(e && e.name==='AbortError') return;
+  }
+}
+try{
+  await navigator.clipboard.writeText(text);
+  toast('Monthly report details copied. You can paste them into WhatsApp, email, or another app.');
+}catch(e){
+  prompt('Copy this monthly report:',text);
+}
+}
+
+function buildMonthlyReportHTML(month){
+let jobs=state.jobs.filter(j=>(j.date||'').slice(0,7)===month).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+let pretty=monthName(month);
+let total=jobs.length,completed=jobs.filter(j=>j.status==='Completed').length,pending=jobs.filter(j=>j.status==='Pending').length,critical=jobs.filter(j=>j.priority==='Critical').length;
+return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BHR Solutions Monthly Maintenance Report - ${esc(pretty)}</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#122033;font-family:Arial,sans-serif}body{padding:8mm}.cover h1{color:#1769aa;margin:0 0 3px;font-size:24px}.cover h2{margin:0 0 12px;font-size:18px}.meta{font-size:10px;color:#52687a;margin-bottom:12px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 14px}.stat{border:1px solid #dbe5ed;border-radius:6px;padding:7px;background:#f6f9fb}.stat b{display:block;font-size:15px}.stat span{font-size:9px;color:#52687a}.summary-table{border-collapse:collapse;width:100%;font-size:8.5px}.summary-table th,.summary-table td{border:1px solid #b9c5cf;padding:5px;text-align:left;vertical-align:top}.summary-table th{background:#eaf1f6}.footer{font-size:8px;color:#718096;margin-top:12px}@media print{body{padding:0}.cover{padding:8mm}@page{size:A4 landscape;margin:0}}
+</style></head><body><section class="cover"><h1>BHR Solutions</h1><h2>Monthly HVAC Maintenance Report</h2><div class="meta">${esc(pretty)} • Generated ${esc(new Date().toLocaleDateString())}</div>
+<div class="summary"><div class="stat"><b>${total}</b><span>Total jobs</span></div><div class="stat"><b>${completed}</b><span>Completed</span></div><div class="stat"><b>${pending}</b><span>Pending</span></div><div class="stat"><b>${critical}</b><span>Critical</span></div></div>
+<table class="summary-table"><thead><tr><th>Date</th><th>Location</th><th>Equipment</th><th>Type</th><th>Technician</th><th>Work performed</th><th>Status</th></tr></thead><tbody>${jobs.map(j=>`<tr><td>${esc(j.date||'')}</td><td>${esc(j.location||'')}</td><td>${esc(j.equipment||'')}</td><td>${esc(j.type||'')}</td><td>${esc(j.technician||'')}</td><td>${esc(j.work||'')}</td><td>${esc(j.status||'')}</td></tr>`).join('')||'<tr><td colspan="7">No jobs recorded for this month.</td></tr>'}</tbody></table>
+<div class="footer">Monthly report contains maintenance data only. Before/after photos remain available inside individual job records and are preserved in backups.</div></section><script>window.onload=function(){setTimeout(function(){window.print()},250)}<\/script></body></html>`;
+}
+function printMonthlyReport(month){
+  let html=buildMonthlyReportHTML(month);
+  let m=html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  let s=html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  let body=m?m[1]:html;
+  let styles=s?s[1]:'';
+  let oldBody=document.body.innerHTML;
+  let oldTitle=document.title;
+  let oldOverflow=document.body.style.overflow;
+  let restoreDone=false;
+  function restore(){
+    if(restoreDone)return;
+    restoreDone=true;
+    document.body.innerHTML=oldBody;
+    document.title=oldTitle;
+    document.body.style.overflow=oldOverflow;
+    window.removeEventListener('afterprint',restore);
+  }
+  document.title='BHR Solutions Monthly Maintenance Report - '+monthName(month);
+  document.body.style.overflow='visible';
+  document.body.innerHTML='<style id="bhr-print-style">'+styles+' body{padding:0!important;margin:0!important;} .print-only-report{padding:8mm;} @media print{.print-only-report{padding:8mm;} }</style><main class="print-only-report">'+body+'</main>';
+  window.addEventListener('afterprint',restore);
+  setTimeout(function(){window.print();},150);
+}
+function backupPage(){
+let total=state.jobs.length, schedules=state.schedules.length, photos=state.jobs.filter(j=>j.before||j.after).length;
+let last=localStorage.getItem('mr_last_backup');
+return `<h2>Data Backup & Export</h2>
+<div class="backupbox"><div class="row"><div class="backupicon">🛡️</div><div><h3 style="margin:0">Protect your maintenance history</h3><p style="margin:4px 0;color:#64748b;font-size:12px">Your jobs stay on this device. Use a JSON backup regularly so you can restore everything, including before/after photos.</p></div></div></div>
+<div class="card" style="margin-bottom:12px;background:#f5fbf7;border-color:#cfe9da"><b>Offline storage: ${storageMode}</b><p style="margin:5px 0 0;color:#64748b;font-size:12px">Jobs, schedules and photos are stored locally on this phone and remain available without internet. Keep regular backups before resetting or clearing the app.</p></div>
+<div class="grid">
+<div class="card stat"><b>${total}</b><span>Saved maintenance reports</span></div>
+<div class="card stat"><b>${schedules}</b><span>Saved schedules</span></div>
+</div>
+<div class="section backupbox"><h3>Full Backup — Recommended</h3><p style="font-size:12px;color:#64748b">Creates one backup file containing jobs, photos, schedules, locations, equipment and app settings. Keep this file somewhere safe.</p><button class="btn green" onclick="downloadBackup()">Backup Everything (JSON)</button>${last?`<p style="font-size:11px;color:#64748b;margin:9px 0 0">Last backup: ${esc(last)}</p>`:''}</div>
+<div class="section backupbox"><h3>Excel / CSV Export</h3><p style="font-size:12px;color:#64748b">CSV files open directly in Microsoft Excel and contain your maintenance records in table form. Photos are represented by Yes/No columns.</p><div class="row" style="flex-wrap:wrap"><button class="btn" onclick="exportJobsCSV()">Export All Jobs CSV</button><button class="btn secondary" onclick="exportCurrentMonthCSV()">Export Selected Month CSV</button></div></div>
+<div class="section backupbox"><h3>Restore Full Backup</h3><p style="font-size:12px;color:#64748b">Choose a JSON backup previously created by this app. Restoring replaces the current app data with the backup data.</p><label class="filebtn">Choose Backup File<input type="file" accept="application/json,.json" class="hidden" onchange="restoreBackup(this)"></label></div>
+<div class="section backupbox"><h3>Important</h3><ul style="font-size:12px;color:#64748b;line-height:1.6;padding-left:20px"><li>Export a backup before clearing Chrome site data or changing/resetting your phone.</li><li>The JSON backup preserves photos; CSV does not.</li><li>GitHub Pages hosts the app, but your job records are not uploaded to GitHub.</li></ul></div>`;
+}
+function downloadFile(name,content,type){let blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function stamp(){let d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')+String(d.getSeconds()).padStart(2,'0')}
+function downloadBackup(){
+let payload={app:'BHR Solutions Maintenance Report',version:2,backupCreatedAt:new Date().toISOString(),user:state.user,jobs:state.jobs,locations:state.locations,equipment:state.equipment,schedules:state.schedules,reportDate:localStorage.getItem('mr_report_date')||'',reportMonth:localStorage.getItem('mr_report_month')||''};
+downloadFile('BHR_Maintenance_Backup_'+stamp()+'.json',JSON.stringify(payload,null,2),'application/json;charset=utf-8');
+localStorage.setItem('mr_last_backup',new Date().toLocaleString());
+toast('Backup created successfully. Save the JSON file somewhere safe.');render();
+}
+function csvCell(v){let x=String(v??'').replace(/\r?\n/g,' ');return '"'+x.replace(/"/g,'""')+'"'}
+function jobsCSV(jobs){
+let headers=['ID','Date','Technician','Location','Equipment','Work Type','Complaint / Observation','Work Performed','Parts / Materials','Remarks','Room Temp °C','Supply Air °C','Return Air °C','Suction PSI','Discharge PSI','Compressor A','Fan A','Voltage L1-L2','Voltage L2-L3','Voltage L3-L1','Status','Priority','Before Photo','After Photo'];
+let rows=[headers.map(csvCell).join(',')];
+for(let j of jobs){rows.push([j.id,j.date,j.technician,j.location,j.equipment,j.type,j.complaint,j.work,j.parts,j.remarks,j.r0,j.r1,j.r2,j.r3,j.r4,j.r5,j.r6,j.r7,j.r8,j.r9,j.status,j.priority,j.before?'Yes':'No',j.after?'Yes':'No'].map(csvCell).join(','))}
+return '\ufeff'+rows.join('\r\n');
+}
+function exportJobsCSV(){downloadFile('BHR_Maintenance_All_Jobs_'+stamp()+'.csv',jobsCSV(state.jobs),'text/csv;charset=utf-8');toast('All maintenance jobs exported. The CSV can be opened in Excel.');}
+function exportCurrentMonthCSV(){let m=localStorage.getItem('mr_report_month')||localDate().slice(0,7);let jobs=state.jobs.filter(j=>monthKey(j.date)===m);downloadFile('BHR_Maintenance_'+m+'.csv',jobsCSV(jobs),'text/csv;charset=utf-8');toast('Selected month exported: '+monthName(m));}
+function restoreBackup(inp){let f=inp.files&&inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x||!Array.isArray(x.jobs)||!Array.isArray(x.schedules))throw new Error('Invalid backup');if(!confirm('Restore this backup? Current saved data will be replaced by the backup.'))return;state.jobs=x.jobs;state.locations=Array.isArray(x.locations)?x.locations:[];state.equipment=Array.isArray(x.equipment)?x.equipment:[];state.schedules=x.schedules;state.user=x.user||state.user;save();if(state.user)localStorage.setItem('mr_user',state.user);if(x.reportDate)localStorage.setItem('mr_report_date',x.reportDate);if(x.reportMonth)localStorage.setItem('mr_report_month',x.reportMonth);localStorage.setItem('mr_last_backup','Restored '+new Date().toLocaleString());toast('Backup restored successfully. Your maintenance history is back.');state.page='dashboard';render();}catch(e){alert('This is not a valid BHR Maintenance backup file.')}};r.readAsText(f);inp.value=''}
+
+const pages={dashboard,new:newPage,jobs,locations,equipment,schedule,reports,backup:backupPage};initStorage();
+
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+e.preventDefault();deferredInstallPrompt=e;
+const b=document.getElementById('installBar');if(b)b.classList.add('show');
+});
+async function installPWA(){
+if(!deferredInstallPrompt){
+alert('If Chrome does not show the install prompt, open Chrome menu ⋮ and choose "Add to Home screen" or "Install app".');
+return;
+}
+deferredInstallPrompt.prompt();
+try{await deferredInstallPrompt.userChoice}catch(e){}
+deferredInstallPrompt=null;
+const b=document.getElementById('installBar');if(b)b.classList.remove('show');
+}
+window.addEventListener('appinstalled',()=>{
+const b=document.getElementById('installBar');if(b)b.classList.remove('show');
+});
+if('serviceWorker' in navigator){
+window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script></body></html>
